@@ -1,21 +1,80 @@
-<div class="user-details">
-  @if (isLoading) {
-    <div class="loading">Fetching user data...</div>
-  }
-  @if (!isLoading) {
-    <!-- show all user data -->
-    @if (user) {
-      <div class="user">
-        <h2>{{ user.name }}</h2>
-        <p>Username: {{ user.username }}</p>
-        <p>Email: {{ user.email }}</p>
-        <p>Phone: {{ user.phone }}</p>
-        <p>Website: {{ user.website }}</p>
-        <p>Company: {{ user.company.name }}</p>
-        <p>Address: {{ user.address.street }}</p>
-        <p>City: {{ user.address.city }}</p>
-        <p>Zipcode: {{ user.address.zipcode }}</p>
-      </div>
-    }
-  }
+<div class="user-details-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>User Details</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (isLoading) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Fetching user data...</p>
+        </div>
+      }
+      
+      @if (!isLoading && user) {
+        <div class="user-info-section">
+          <h2 class="user-name">{{ user.name }}</h2>
+          <p class="user-username"><span>&#64;</span>{{ user.username }}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="detail-section">
+          <h3>Contact Information</h3>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>email</mat-icon> Email:</span>
+            <span class="detail-value">{{ user.email }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>phone</mat-icon> Phone:</span>
+            <span class="detail-value">{{ user.phone }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>language</mat-icon> Website:</span>
+            <span class="detail-value">
+              <a [href]="'https://' + user.website" target="_blank" class="website-link">
+                {{ user.website }}
+                <mat-icon class="small-icon">open_in_new</mat-icon>
+              </a>
+            </span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="detail-section">
+          <h3>Company</h3>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>business</mat-icon> Name:</span>
+            <span class="detail-value">{{ user.company.name }}</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="detail-section">
+          <h3>Address</h3>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>location_on</mat-icon> Street:</span>
+            <span class="detail-value">{{ user.address.street }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>location_city</mat-icon> City:</span>
+            <span class="detail-value">{{ user.address.city }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label"><mat-icon>markunread_mailbox</mat-icon> Zipcode:</span>
+            <span class="detail-value">{{ user.address.zipcode }}</span>
+          </div>
+        </div>
+      }
+    </mat-card-content>
+
+    <mat-card-actions>
+      <a mat-button color="primary" routerLink="/">
+        <mat-icon>arrow_back</mat-icon> Back to User List
+      </a>
+    </mat-card-actions>
+  </mat-card>
 </div>

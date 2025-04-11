@@ -1,37 +1,77 @@
-<div class="user-list">
-  @if (isLoading) {
-    <div class="loading">Fetching users data...</div>
-  }
-  @if (!isLoading) {
-    @if (searchQuery) {
-      <div class="search-info">Search results for: "{{ searchQuery }}"</div>
-    }
+<div class="user-list-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>User List</mat-card-title>
+      @if (searchQuery) {
+        <mat-card-subtitle>
+          <mat-chip-set>
+            <mat-chip>Search results for: "{{ searchQuery }}"</mat-chip>
+          </mat-chip-set>
+        </mat-card-subtitle>
+      }
+    </mat-card-header>
 
-    @if (users.length === 0) {
-      <div class="empty">No users data</div>
-    }
-    @else if (filteredUsers.length === 0) {
-      <div class="empty">No users found matching "{{ searchQuery }}"</div>
-    }
-    @if (filteredUsers.length > 0) {
-      <table border="1">
-        <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Website</th>
-          <th>Detail</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of filteredUsers">
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td><a [href]="user.website" target="_blank">{{ user.website }}</a></td>
-        <td><a [routerLink]="['/details', user.id]">Detail</a></td>
-      </tr>
-    </tbody>
-  </table>
-    }
-  }
+    <mat-card-content>
+      @if (isLoading) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Fetching users data...</p>
+        </div>
+      }
+      
+      @if (!isLoading) {
+        @if (users.length === 0) {
+          <div class="empty-state">
+            <mat-icon>person_off</mat-icon>
+            <p>No users data available</p>
+          </div>
+        }
+        @else if (filteredUsers.length === 0) {
+          <div class="empty-state">
+            <mat-icon>search_off</mat-icon>
+            <p>No users found matching "{{ searchQuery }}"</p>
+          </div>
+        }
+        @if (filteredUsers.length > 0) {
+          <table mat-table [dataSource]="filteredUsers" class="mat-elevation-z2">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+            </ng-container>
+
+            <!-- Website Column -->
+            <ng-container matColumnDef="website">
+              <th mat-header-cell *matHeaderCellDef>Website</th>
+              <td mat-cell *matCellDef="let user">
+                <a [href]="user.website" target="_blank" class="website-link">
+                  {{ user.website }}
+                  <mat-icon class="small-icon">open_in_new</mat-icon>
+                </a>
+              </td>
+            </ng-container>
+
+            <!-- Action Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let user">
+                <a mat-button color="primary" [routerLink]="['/details', user.id]">
+                  <mat-icon>visibility</mat-icon> View Details
+                </a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['name', 'email', 'website', 'actions']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['name', 'email', 'website', 'actions']"></tr>
+          </table>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
 </div>

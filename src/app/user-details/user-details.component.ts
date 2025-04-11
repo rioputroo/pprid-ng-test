@@ -5,9 +5,25 @@ import { Users } from '../user-list/users';
 import { UserStoreService } from '../user-store.service';
 import { Subscription } from 'rxjs';
 
+// Angular Material imports
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-user-details',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatCardModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatIconModule
+  ],
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.scss'
 })
