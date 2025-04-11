@@ -1,1 +1,21 @@
-<p>user-details works!</p>
+<div class="user-details">
+  @if (isLoading) {
+    <div class="loading">Fetching user data...</div>
+  }
+  @if (!isLoading) {
+    <!-- show all user data -->
+    @if (user) {
+      <div class="user">
+        <h2>{{ user.name }}</h2>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Phone: {{ user.phone }}</p>
+        <p>Website: {{ user.website }}</p>
+        <p>Company: {{ user.company.name }}</p>
+        <p>Address: {{ user.address.street }}</p>
+        <p>City: {{ user.address.city }}</p>
+        <p>Zipcode: {{ user.address.zipcode }}</p>
+      </div>
+    }
+  }
+</div>
