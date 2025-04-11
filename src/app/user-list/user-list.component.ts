@@ -1,10 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Users } from './users';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { UserStoreService } from '../user-store.service';
 
 @Component({
   selector: 'app-user-list',
@@ -12,19 +12,30 @@ import { Subscription } from 'rxjs';
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
-export class UserListComponent implements OnInit {
-  userService = inject(UserService);
+export class UserListComponent implements OnInit, OnDestroy {
+  private userStore = inject(UserStoreService);
   private route = inject(ActivatedRoute);
 
   users: Users[] = [];
   filteredUsers: Users[] = [];
   searchQuery: string = '';
   private queryParamSubscription!: Subscription;
+  private usersSubscription!: Subscription;
+  private loadingSubscription!: Subscription;
 
   isLoading = true;
 
   ngOnInit(): void {
-    this.fetchUsers();
+    this.userStore.loadUsers();
+
+    this.usersSubscription = this.userStore.users$.subscribe(users => {
+      this.users = users;
+      this.filterUsers();
+    });
+
+    this.loadingSubscription = this.userStore.loading$.subscribe(loading => {
+      this.isLoading = loading;
+    });
 
     this.queryParamSubscription = this.route.queryParams.subscribe(params => {
       this.searchQuery = params['search'] || '';
@@ -36,17 +47,12 @@ export class UserListComponent implements OnInit {
     if (this.queryParamSubscription) {
       this.queryParamSubscription.unsubscribe();
     }
-  }
-
-  fetchUsers(): void {
-    this.userService.fetchUsers().subscribe((resp) => {
-      this.users = resp;
-      this.filterUsers();
-      this.isLoading = false;
-    }, (err) => {
-      this.isLoading = false;
-      throw new Error(err);
-    });
+    if (this.usersSubscription) {
+      this.usersSubscription.unsubscribe();
+    }
+    if (this.loadingSubscription) {
+      this.loadingSubscription.unsubscribe();
+    }
   }
 
   filterUsers(): void {

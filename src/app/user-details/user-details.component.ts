@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Users } from '../user-list/users';
+import { UserStoreService } from '../user-store.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-user-details',
@@ -10,29 +11,43 @@ import { Users } from '../user-list/users';
   templateUrl: './user-details.component.html',
   styleUrl: './user-details.component.scss'
 })
-export class UserDetailsComponent implements OnInit {
-  userService = inject(UserService);
-  route = inject(ActivatedRoute);
+export class UserDetailsComponent implements OnInit, OnDestroy {
+  private userStore = inject(UserStoreService);
+  private route = inject(ActivatedRoute);
 
   user: Users | null = null;
   isLoading = true;
+  
+  private userSubscription!: Subscription;
+  private loadingSubscription!: Subscription;
 
   ngOnInit(): void {
-    // get id from url
-    const id = this.route.snapshot.params['id'];
-    this.fetchUser(id);
-  }
-
-  fetchUser(id: number): void {
-    this.userService.fetchUser(id).subscribe({
-      next: (resp) => {
-        this.user = resp;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
-        throw new Error(err);
-      }
+    // Mengambil ID pengguna dari URL
+    const id = Number(this.route.snapshot.params['id']);
+    
+    // Memuat detail pengguna dari store
+    this.userStore.loadUser(id);
+    
+    // Subscribe ke selectedUser$ untuk mendapatkan data pengguna yang dipilih
+    this.userSubscription = this.userStore.selectedUser$.subscribe(user => {
+      this.user = user;
+    });
+    
+    // Subscribe ke status loading
+    this.loadingSubscription = this.userStore.loading$.subscribe(loading => {
+      this.isLoading = loading;
     });
   }
+  
+  ngOnDestroy(): void {
+    // Bersihkan subscription saat komponen dihancurkan
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+    if (this.loadingSubscription) {
+      this.loadingSubscription.unsubscribe();
+    }
+  }
+
+  // Tidak perlu fetchUser() karena sekarang menggunakan store
 }
