@@ -3,12 +3,13 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 
 export const routes: Routes = [
+  {path: '', redirectTo: 'list', pathMatch: 'full'},
   {
-    path: '',
+    path: 'list',
     component: UserListComponent
   },
   {
-    path: 'user/:id',
+    path: 'details/:id',
     component: UserDetailsComponent
   }
 ];

@@ -3,11 +3,17 @@
     <div class="loading">Fetching users data...</div>
   }
   @if (!isLoading) {
+    @if (searchQuery) {
+      <div class="search-info">Search results for: "{{ searchQuery }}"</div>
+    }
 
     @if (users.length === 0) {
       <div class="empty">No users data</div>
     }
-    @if (users.length > 0) {
+    @else if (filteredUsers.length === 0) {
+      <div class="empty">No users found matching "{{ searchQuery }}"</div>
+    }
+    @if (filteredUsers.length > 0) {
       <table border="1">
         <thead>
         <tr>
@@ -18,11 +24,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users">
+      <tr *ngFor="let user of filteredUsers">
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
-        <td>{{ user.website }}</td>
-        <td><a [routerLink]="['/user', user.id]">Detail</a></td>
+        <td><a [href]="user.website" target="_blank">{{ user.website }}</a></td>
+        <td><a [routerLink]="['/details', user.id]">Detail</a></td>
       </tr>
     </tbody>
   </table>
