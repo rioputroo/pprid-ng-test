@@ -1,1 +1,29 @@
-<p>user-list works!</p>
+<div class="user-list">
+  @if (isLoading) {
+    <div class="loading">Fetching users data...</div>
+  }
+  @if (!isLoading) {
+
+    @if (users.length === 0) {
+      <div class="empty">No users data</div>
+    }
+    @if (users.length > 0) {
+      <table border="1">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Website</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.website }}</td>
+      </tr>
+    </tbody>
+  </table>
+    }
+  }
+</div>
