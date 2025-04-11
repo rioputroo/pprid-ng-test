@@ -33,30 +33,25 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
 
   user: Users | null = null;
   isLoading = true;
-  
+
   private userSubscription!: Subscription;
   private loadingSubscription!: Subscription;
 
   ngOnInit(): void {
-    // Mengambil ID pengguna dari URL
     const id = Number(this.route.snapshot.params['id']);
-    
-    // Memuat detail pengguna dari store
+
     this.userStore.loadUser(id);
-    
-    // Subscribe ke selectedUser$ untuk mendapatkan data pengguna yang dipilih
+
     this.userSubscription = this.userStore.selectedUser$.subscribe(user => {
       this.user = user;
     });
-    
-    // Subscribe ke status loading
+
     this.loadingSubscription = this.userStore.loading$.subscribe(loading => {
       this.isLoading = loading;
     });
   }
-  
+
   ngOnDestroy(): void {
-    // Bersihkan subscription saat komponen dihancurkan
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
@@ -64,6 +59,4 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       this.loadingSubscription.unsubscribe();
     }
   }
-
-  // Tidak perlu fetchUser() karena sekarang menggunakan store
 }
